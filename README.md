@@ -8,7 +8,7 @@ This app does not include any code for anything other than sending messages. Pho
 Furthermore there are likely to be bugs or issues.
 
 ## Install
-You will need to install the application via the APK in the root or by building the code from source. 
+You will need to install the application via the APK in releases(https://github.com/geocom/Wahoo-Sender/releases) or by building the code from source. 
 
 You will also need to turn off battery optimisation in order for the app to continue running in the background while you ride.
 
