@@ -394,9 +394,38 @@ public class DeviceControlActivity extends Activity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void sendString(String from, String message) throws UnsupportedEncodingException {
         String premessage = new String(new byte[] {0x01, 0x01, 0x00, 0x03});
-        String jsonMessage = "{\"from\":\""+ from +"\",\"body\":\"" + message + "\"}";
+        String lmessage;
+        if (message.getBytes().length > 95){
+            StringBuilder t = new StringBuilder();
+            char[] chars = message.toCharArray();
+            boolean endloop = true;
+            int position = 0;
+            int bytesize = 0;
+            while(endloop){
+                int new_size;
+                if (Character.isLetterOrDigit(chars[position])){
+                    //ASCII
+                    new_size = 1;
+                }else{
+                    //Unicode
+                    new_size = 2;
+                }
+
+                if((bytesize + new_size) > 95) {
+                    endloop = false;
+                }else{
+                    bytesize = (bytesize + new_size);
+                    t.append(chars[position]);
+                }
+                position = position + 1;
+            }
+            lmessage = t.toString().concat("...");
+        }else{
+            lmessage = message;
+        }
+        String jsonMessage = "{\"from\":\""+ from +"\",\"body\":\"" + lmessage + "\"}";
         //String jsonMessage = "{\"f\":\"\",\"\":\"\"}";
-        String hex = Integer.toHexString(jsonMessage.length());
+        String hex = Integer.toHexString(jsonMessage.getBytes().length);
         String asciiLength;
         if (hex.length() == 1){
             asciiLength = hexToASCII("0" + hex);
