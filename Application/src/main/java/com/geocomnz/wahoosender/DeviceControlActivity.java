@@ -250,6 +250,7 @@ public class DeviceControlActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
+        unregisterReceiver(NotificationListener);
         mBluetoothLeService = null;
     }
 
