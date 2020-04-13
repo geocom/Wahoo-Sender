@@ -93,7 +93,7 @@ public class DeviceControlActivity extends Activity {
     private final String LIST_UUID = "UUID";
 
     private NotificationListener NotificationListener;
-
+    private ArrayList<Timer> mTimers = new ArrayList<Timer>();
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -250,6 +250,10 @@ public class DeviceControlActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
+        unregisterReceiver(NotificationListener);
+        for (Timer t : mTimers) {
+            t.cancel();
+        }
         mBluetoothLeService = null;
     }
 
@@ -342,13 +346,15 @@ public class DeviceControlActivity extends Activity {
                     mBluetoothLeService.setCharacteristicNotification(smsGatt, true);
                 }else if(uuid.equals(PollingUUID)){
                     PollGatt = gattCharacteristic;
-                    new Timer().scheduleAtFixedRate(new TimerTask(){
+                    Timer timer = new Timer();
+                    timer.scheduleAtFixedRate(new TimerTask(){
                         @Override
                         public void run(){
                             String message = new String(new byte[] {0x00});
                             mBluetoothLeService.writeCharacteristic(PollGatt, message);
                         }
                     },0,5000);
+                    mTimers.add(timer);
                 }
             }
             mGattCharacteristics.add(charas);
